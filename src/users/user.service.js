@@ -19,14 +19,14 @@ async function getById(id) {
 
 async function create(params) {
     // validate
-    if (await db.User.findOne({ where: { email: params.email } })) {
-        throw 'Email "' + params.email + '" is already registered';
+    if (await db.User.findOne({ where: { email_usp: params.email_usp } })) {
+        throw 'Email "' + params.email_usp + '" is already registered';
     }
 
     const user = new db.User(params);
     
     // hash password
-    user.passwordHash = await bcrypt.hash(params.password, 10);
+    user.password_usp = await bcrypt.hash(params.password_usps, 10);
 
     // save user
     await user.save();
