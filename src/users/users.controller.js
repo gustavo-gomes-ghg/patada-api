@@ -52,13 +52,18 @@ function _delete(req, res, next) {
 
 function createSchema(req, res, next) {
     const schema = Joi.object({
-        title: Joi.string().required(),
-        firstName: Joi.string().required(),
-        lastName: Joi.string().required(),
-        role: Joi.string().valid(Role.Admin, Role.User).required(),
+        name_usp: Joi.string().required(),
+        login_usp: Joi.string().required(),
+        first_name_usp: Joi.string().required(),
+        last_name_usp: Joi.string().required(),
+        nick_name_usp: Joi.string().required(),
+        email_usp: Joi.string().required(),
+        password_usp: Joi.string().required(),
+        captcha_usp: Joi.string().required(),
+        /*role: Joi.string().valid(Role.Admin, Role.User).required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(6).required(),
-        confirmPassword: Joi.string().valid(Joi.ref('password')).required()
+        confirmPassword: Joi.string().valid(Joi.ref('password')).required()*/
     });
     validateRequest(req, next, schema);
 }

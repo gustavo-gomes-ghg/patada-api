@@ -1,5 +1,6 @@
 ﻿const bcrypt = require('bcryptjs');
 const db = require('_helpers/db');
+const validateCaptcha = require('_middleware/validate-captcha');
 
 module.exports = {
     getAll,
@@ -18,15 +19,41 @@ async function getById(id) {
 }
 
 async function create(params) {
-    // validate
+
+    // validate part 1
+    if (   !params.login_usp 
+        || !params.email_usp 
+        || !params.senha_usp 
+        || !params.captcha_usp 
+        )
+    {
+        throw 'Insufficient data';
+    }
+
+    // validate part 2 - Email
     if (await db.User.findOne({ where: { email_usp: params.email_usp } })) {
         throw 'Email "' + params.email_usp + '" is already registered';
     }
 
+    // validate part 3 - captcha
+    if (   params.captcha_usp === null 
+        || params.captcha_usp === undefined 
+        || params.captcha_usp === NaN ) 
+    {
+        throw 'Inconsistent captcha data';
+    }    
+
+    // validate part 4 - captcha
+    const status = await validateCaptcha( params.captcha_usp );
+    if ( status.success === false ) {
+        throw 'Invalid captcha';
+    }
+
+    // instantiate user object
     const user = new db.User(params);
     
     // hash password
-    user.password_usp = await bcrypt.hash(params.password_usps, 10);
+    user.password_usp = await bcrypt.hash(params.password_usp, 10);
 
     // save user
     await user.save();
